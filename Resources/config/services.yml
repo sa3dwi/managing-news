@@ -1,0 +1,19 @@
+services:
+
+    news.entity.subscriber:
+        class: NewsBundle\Subscriber\EntitySubscriber
+        calls:
+            - [setContainer, ['@service_container']]
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
+    news.service:
+        class: NewsBundle\Service\NewsService\NewsService
+        calls:
+            - [setContainer, ['@service_container']]
+
+
+    news.backend.menu:
+        class:  NewsBundle\DataFixtures\ORM\LoadMenu
+        tags:
+            - { name: backend.menu.fixture }

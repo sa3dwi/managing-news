@@ -1,0 +1,17 @@
+news:
+    menu:
+        article: Article
+        news: News
+    hints:
+        article: Here you will find control of the articles you can add, delete or modify any article you want
+        news: Here you will find control of the news you can add, delete or modify any news article you want
+    log:
+        add_article: News with id number %entity_id% has been added
+        edit_article: News with id number %entity_id% has been edited
+        delete_article: News with id number %entity_id% has been deleted
+    titles:
+        new_item: Add new article
+        edit_item: Edit Article
+        show_item: Show Article
+        author: Author
+        position: Position

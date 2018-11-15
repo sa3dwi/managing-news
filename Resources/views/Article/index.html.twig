@@ -1,0 +1,160 @@
+{% extends ':admin:base.html.twig' %}
+{% import "AdminBundle:Main:_helper.html.twig" as helper %}
+
+{% set sideMenuActiveSection = 'news' %}
+
+{% block head %}
+    {{ parent()  }}
+    <link rel="stylesheet" href="{{ asset('bundles/admin/ace/assets/css/chosen.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+        </script>
+
+        <ul class="breadcrumb">
+            <li>
+                <i class="icon-home home-icon"></i>
+                <a href="{{ path('admin_main_home') }}">{{ 'admin.titles.home'|trans }}</a>
+            </li>
+            <li class="active">{{ 'news.menu.article'|trans }}</li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block gridFilter %}
+    {% form_theme formFilter ':admin:filterFormTheme.html.twig' %}
+    {{ form_errors(formFilter) }}
+    <form id="gridFilter" novalidate action="{{formFilter.vars.action}}" method="post">
+        {{ form_rest(formFilter) }}
+        <br>
+        <button name="submit" class="btn btn-sm btn-primary" type="submit">{{ 'admin.titles.search'|trans }}</button>
+        <button name="reset" class="btn btn-sm" type="reset">{{ 'admin.titles.reset'|trans }}</button>
+    </form>
+{% endblock %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ 'news.menu.article'|trans }}</h1>
+    </div>
+
+    <div class="btn-group screenTopButtons">
+        <a class="btn btn-sm btn-success" href="{{ path('news_article_new') }}"> {{ 'admin.titles.add'|trans }} </a>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="table-responsive">
+                <form action="{{ path('news_article_batch') }}" method="post" class="gridForm">
+                <table id="sample-table-1" class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th class="center" width="35">
+                            <label>
+                                <input type="checkbox" class="ace" />
+                                <span class="lbl"></span>
+                            </label>
+                        </th>
+                        <th>{{ knp_pagination_sortable(entities, 'admin.titles.id'|trans, 'a.id') }}</th>
+                        <th>{{ knp_pagination_sortable(entities, 'admin.titles.title'|trans, 'a.title') }}</th>
+                        <th>{{ knp_pagination_sortable(entities, 'admin.titles.lang'|trans, 'l.name') }}</th>
+                        <th>{{ knp_pagination_sortable(entities, 'admin.titles.created_at'|trans, 'a.createdAt') }}</th>
+                        <th>{{ knp_pagination_sortable(entities, 'admin.titles.active'|trans, 'a.active') }}</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for entity in entities %}
+                        <tr>
+                            <td class="center" width="35">
+                                <label>
+                                    <input type="checkbox" class="ace" value="{{ entity.data.id }}" name="idx[]" />
+                                    <span class="lbl"></span>
+                                </label>
+                            </td>
+                            <td>{{ entity.data.id }}</td>
+                            <td>{{ entity.data.title }}</td>
+                            <td>{{ localeService.getLanguageById(entity.data.language) }}</td>
+                            <td>
+                                {{ entity.data.createdAt|date('Y-m-d H:i:s') }}
+                            </td>
+                            <td>
+                                {% if entity.data.active %}
+                                    <span class="icon-check"></span>
+                                {% else %}
+                                    <span class=" icon-check-empty"></span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="visible-md visible-lg hidden-sm hidden-xs action-buttons">
+                                    <a class="blue" href="{{ path('news_article_show', { 'id': entity.data.id }) }}">
+                                        <i class="icon-zoom-in bigger-130"></i>
+                                    </a>
+                                    <a class="green" href="{{ path('news_article_edit', { 'id': entity.data.id }) }}">
+                                        <i class="icon-pencil bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="{{ path('news_article_delete', { 'id': entity.data.id, 'single': true, 'redirect': app.request.uri|base64_encode }) }}">
+                                        <i class="icon-trash bigger-130"></i>
+                                    </a>
+                                </div>
+
+                                <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                    <div class="inline position-relative">
+                                        <button class="btn btn-minier btn-yellow dropdown-toggle" data-toggle="dropdown">
+                                            <i class="icon-caret-down icon-only bigger-120"></i>
+                                        </button>
+
+                                        <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                            <li>
+                                                <a href="{{ path('news_article_show', { 'id': entity.data.id }) }}" class="tooltip-info" data-rel="tooltip" title="View">
+                                                    <span class="blue">
+                                                        <i class="icon-zoom-in bigger-120"></i>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('news_article_edit', { 'id': entity.data.id }) }}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                    <span class="green">
+                                                        <i class="icon-edit bigger-120"></i>
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{{ path('news_article_delete', { 'id': entity.data.id, 'redirect': app.request.uri|base64_encode }) }}" class="tooltip-success" data-rel="tooltip" title="Edit">
+                                                    <span class="green">
+                                                        <i class="icon-edit bigger-120"></i>
+                                                    </span>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="form-inline">
+                    <label for="all_elements" class="checkbox"></label>
+                    <select name="action">
+                        <option value="delete">{{ 'admin.titles.delete'|trans }}</option>
+                    </select>
+                    <input type="submit" value="Ok" class="btn btn-sm btn-primary">
+                </div>
+                </form>
+            </div><!-- /.table-responsive -->
+        </div><!-- /span -->
+        {{ knp_pagination_render(entities) }}
+
+    </div><!-- /row -->
+
+{% endblock %}
+
+
+{% block bottomScripts %}
+    {{ helper.gridJavaScripts(path('news_article')) }}
+{% endblock %}

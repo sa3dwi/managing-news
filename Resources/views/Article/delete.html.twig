@@ -1,0 +1,68 @@
+{% extends ':admin:base.html.twig' %}
+
+{% set sideMenuActiveSection = 'news' %}
+
+{% block breadcrumb %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+        </script>
+
+        <ul class="breadcrumb">
+            <li>
+                <i class="icon-home home-icon"></i>
+                <a href="{{ path('admin_main_home') }}">{{ 'admin.titles.home'|trans }}</a>
+            </li>
+            <li><a href="{{ path('news_article') }}">{{ 'news.menu.article'|trans }}</a></li>
+            <li class="active">{{ 'admin.titles.delete'|trans }} </li>
+        </ul>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="page-header">
+        <h1> {{ 'admin.titles.delete'|trans }} </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <div> {{ 'admin.messages.are_you_sure_delete'|trans }} </div>
+
+            {% if report.restrictions|length %}
+                <div class="alert alert-info">
+                    <strong> {{ 'admin.messages.the_following_items_will_not_be_deleted'|trans }} </strong>
+                    <ul>
+                        {% for restrection in report.restrictions %}
+                            <li>{{ restrection.entity }}, {{ restrection.serviceName }}, ({{ restrection.count }})</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if report.delets|length %}
+                <div class="alert alert-warning">
+                    <strong> {{ 'admin.messages.this_items_will_be_deleted'|trans }} </strong>
+                    <ul>
+                        {% for entity in report.delets %}
+                            <li>{{ entity }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            <div>
+                <form method="post" action="{{ app.request.uri }}">
+                    {% if report.delets|length %}
+                        <button type="submit" class="btn btn-sm btn-success" href=""> {{  'admin.titles.yes'|trans }} </button>
+                    {% endif %}
+                    <a class="btn btn-sm btn-success" href="{{ redirect }}">{{  'admin.titles.back'|trans }} </a>
+                </form>
+            </div>
+
+
+
+        </div>
+    </div>
+{% endblock %}

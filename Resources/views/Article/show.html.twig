@@ -1,0 +1,107 @@
+{% extends ':admin:base.html.twig' %}
+
+{% set sideMenuActiveSection = 'news' %}
+
+{% block breadcrumb %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try {
+                ace.settings.check('breadcrumbs', 'fixed')
+            } catch (e) {
+            }
+        </script>
+
+        <ul class="breadcrumb">
+            <li>
+                <i class="icon-home home-icon"></i>
+                <a href="{{ path('admin_main_home') }}">{{ 'admin.titles.home'|trans }}</a>
+            </li>
+            <li><a href="{{ path('news_article') }}">{{ 'news.menu.article'|trans }}</a></li>
+            <li class="active">{{ 'news.titles.show_item'|trans }}</li>
+        </ul>
+    </div>
+{% endblock %}
+
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ 'news.menu.article'|trans }}</h1>
+    </div>
+
+    <div class="btn-group screenTopButtons">
+        <a class="btn btn-sm btn-inverse" href="{{ path('news_article') }}">{{ 'admin.titles.list'|trans }}</a>
+        <a class="btn btn-sm btn-success" href="{{ path('news_article_new') }}">{{ 'admin.titles.add'|trans }}</a>
+        <a class="btn btn-sm btn-info"
+           href="{{ path('news_article_edit', { 'id': entity.id }) }}">{{ 'admin.titles.edit'|trans }}</a>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <table class="table table-bordered table-striped">
+                <tbody>
+                <tr>
+                    <th width="100">{{ 'admin.titles.id'|trans }}</th>
+                    <td>{{ entity.id }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'admin.titles.title'|trans }}</th>
+                    <td>{{ entity.title }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'admin.titles.photo'|trans }}</th>
+                    <td>
+                        {% if entity.photo %}
+                            <div>
+                                <a class="fancybox" rel="gallery" href="{{ asset(entity.photo) }}"
+                                   title="{{ entity.title }}">
+                                    <img src="{{ asset(entity.photo) }}?{{ uniq_id() }}" style="max-width: 100px;"/></a>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>{{ 'news.titles.author'|trans }}</th>
+                    <td>{{ entity.author }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'news.titles.position'|trans }}</th>
+                    <td>{{ entity.position }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'admin.titles.description'|trans }}</th>
+                    <td>{{ entity.description | raw }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'admin.titles.lang'|trans }}</th>
+                    <td>{{ localeService.getLanguageById(entity.language) }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'admin.titles.created_at'|trans }}</th>
+                    <td>{{ entity.createdAt|date('Y-m-d H:i:s') }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'admin.titles.modified_at'|trans }}</th>
+                    <td>{{ entity.updatedAt|date('Y-m-d H:i:s') }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'admin.titles.active'|trans }}</th>
+                    <td>
+                        {% if entity.active %}
+                            <span class="icon-check"></span>
+                        {% else %}
+                            <span class=" icon-check-empty"></span>
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block bottomScripts %}
+    {% include ':admin:_fancyboxIncludes.html.twig' %}
+{% endblock %}

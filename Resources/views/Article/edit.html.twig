@@ -1,0 +1,360 @@
+{% extends ':admin:base.html.twig' %}
+
+{% import "AdminBundle:Main:_helper.html.twig" as helper %}
+
+{% set sideMenuActiveSection = 'news' %}
+
+{% block head %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('bundles/admin/ace/assets/css/chosen.css') }}"/>
+    <link rel="stylesheet" href="{{ asset('bundles/admin/ace/assets/css/colorbox.css') }}" />
+{% endblock %}
+
+{% block breadcrumb %}
+    <div class="breadcrumbs" id="breadcrumbs">
+        <script type="text/javascript">
+            try{ace.settings.check('breadcrumbs' , 'fixed')}catch(e){}
+        </script>
+
+        <ul class="breadcrumb">
+            <li>
+                <i class="icon-home home-icon"></i>
+                <a href="{{ path('admin_main_home') }}">{{ 'admin.titles.home'|trans }}</a>
+            </li>
+            <li><a href="{{ path('news_article') }}">{{ 'news.menu.article'|trans }}</a></li>
+            <li class="active">{{ 'news.titles.edit_item'|trans }}</li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>{{ 'news.titles.edit_item'|trans }}</h1>
+</div>
+
+<div class="btn-group screenTopButtons">
+    <a class="btn btn-sm btn-inverse" href="{{ path('news_article') }}">{{ 'admin.titles.list'|trans }}</a>
+    <a class="btn btn-sm btn-success" href="{{ path('news_article_new') }}">{{ 'admin.titles.add'|trans }}</a>
+    <button class="btn btn-sm btn-inverse" id="btnShowImageGallery" role="button" data-toggle="modal">Images</button>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+
+        {{ form_errors(edit_form) }}
+        {{ form_start(edit_form, {'attr': {'novalidate':'true', 'class': 'form-horizontal', 'role':'form'}}) }}
+
+        <div class="space-4"></div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right"
+            > {{ form_label(edit_form.title) }} </label>
+            <div class="col-sm-10">
+                <label>
+                    {{ form_errors(edit_form.title) }}
+                    {{ form_widget(edit_form.title) }}
+                    <span class="lbl"></span>
+                </label>
+
+            </div>
+        </div>
+        <div class="space-4"></div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right"> {{ form_label(edit_form.photoFile) }} </label>
+            <div class="col-sm-10">
+                {{ form_errors(edit_form.photoFile) }}
+                {{ form_widget(edit_form.photoFile) }}
+                {% if entity.photo %}
+                    <br>
+                    <div>
+                        <a class="fancybox" rel="gallery" href="{{ asset(entity.photo) }}" title="">
+                            <img src="{{ asset(entity.photo) }}?{{ uniq_id() }}" style="max-width: 100px;"/></a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="space-4"></div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right"> {{ form_label(edit_form.author) }} </label>
+            <div class="col-sm-10">
+                <label>
+                    {{ form_errors(edit_form.author) }}
+                    {{ form_widget(edit_form.author) }}
+                    <span class="lbl"></span>
+                </label>
+
+            </div>
+        </div>
+        <div class="space-4"></div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right"
+            > {{ form_label(edit_form.position) }} </label>
+            <div class="col-sm-10">
+                <label>
+                    {{ form_errors(edit_form.position) }}
+                    {{ form_widget(edit_form.position) }}
+                    <span class="lbl"></span>
+                </label>
+
+            </div>
+        </div>
+
+
+        <div class="space-4"></div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right"> {{ form_label(edit_form.description) }} </label>
+            <div class="col-sm-10">
+                <label>
+                    {{ form_errors(edit_form.description) }}
+                    {{ form_widget(edit_form.description) }}
+                    <span class="lbl"></span>
+                </label>
+
+            </div>
+        </div>
+        <div class="space-4"></div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right"> {{ form_label(edit_form.language) }} </label>
+            <div class="col-sm-10">
+                <label>
+                    {{ form_errors(edit_form.language) }}
+                    {{ form_widget(edit_form.language) }}
+                    <span class="lbl"></span>
+                </label>
+
+            </div>
+        </div>
+        <div class="space-4"></div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label no-padding-right"> {{ form_label(edit_form.active) }} </label>
+            <div class="col-sm-10">
+                <label>
+                    {{ form_errors(edit_form.active) }}
+                    {{ form_widget(edit_form.active) }}
+                    <span class="lbl"></span>
+                </label>
+
+            </div>
+        </div>
+        <div class="space-4"></div>
+
+        {{ form_rest(edit_form) }}
+            <div class="clearfix form-actions">
+                <div class="col-md-offset-2 col-md-10">
+                    <button class="btn btn-info" type="submit" name="submit">
+                        <i class="icon-ok bigger-110"></i>{{ 'admin.titles.edit'|trans }}
+                    </button>
+                </div>
+            </div>
+        {{ form_end(edit_form) }}
+    </div>
+</div>
+
+<div id="dialog-gallery" class="hide">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <button id="uploadBtn" class="btn btn-large btn-primary">Choose file</button>
+            </div>
+            <div class="col-xs-12">
+                <div id="progressOuter" class="progress progress-striped active" style="display:none;">
+                    <div id="progressBar" class="progress-bar progress-bar-success"  role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-top:10px;">
+            <div class="col-xs-10">
+                <div id="msgBox">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row-fluid" id="galleryImages"></div>
+</div>
+
+{% endblock %}
+
+{% block bottomScripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/js/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('bundles/admin/ace/assets/js/chosen.jquery.min.js') }}"></script>
+    <script src="{{ asset('bundles/admin/js/ckeditor/ckeditor.js') }}"></script>
+    <script src="{{ asset('bundles/admin/ace/assets/js/jquery.colorbox-min.js') }}"></script>
+    <script src="{{ asset('bundles/admin/js/SimpleAjaxUploader/SimpleAjaxUploader.min.js') }}"></script>
+
+    {% include ':admin:_fancyboxIncludes.html.twig' %}
+
+    <script type="text/javascript">
+        jQuery(function($) {
+
+            var uuid = $('#article_uuid').val();
+            var imageUploadUrl = "{{ url('news_article_upload_image', { 'uniqid':'XYZ', 'temp':false }) }}";
+            imageUploadUrl = imageUploadUrl.replace('XYZ', uuid);
+
+            var loadImagesUrl = "{{ url('news_article_load_images', { 'uniqid':'XYZ', 'temp':false }) }}";
+            loadImagesUrl = loadImagesUrl.replace('XYZ', uuid);
+
+            $(".chosen-select").chosen();
+            CKEDITOR.config.language = '{{ currentLanguage.locale }}';
+            CKEDITOR.replace('article_description', {
+                contentsLangDirection : '{{ currentLanguage.direction }}'
+            });
+
+            $("#btnShowImageGallery").on('click', function(e) {
+                e.preventDefault();
+
+                var dialog = $("#dialog-gallery").removeClass('hide').dialog({
+                    modal: false,
+                    title: "Image Gallery",
+                    buttons: [{
+                        text: "Close",
+                        "class" : "btn btn-xs",
+                        click: function() {
+                            $(this).dialog( "close" );
+                        }
+                    }]
+                });
+            });
+
+            var btn = document.getElementById('uploadBtn'),
+                progressBar = document.getElementById('progressBar'),
+                progressOuter = document.getElementById('progressOuter'),
+                msgBox = document.getElementById('msgBox');
+
+            var uploader = new ss.SimpleUpload({
+                button: btn,
+                url: imageUploadUrl,
+                name: 'uploadfile',
+                multipart: true,
+                hoverClass: 'hover',
+                focusClass: 'focus',
+                responseType: 'json',
+                startXHR: function() {
+                    progressOuter.style.display = 'block'; // make progress bar visible
+                    this.setProgressBar( progressBar );
+                },
+                onSubmit: function() {
+                    msgBox.innerHTML = ''; // empty the message box
+                    btn.innerHTML = 'Uploading...'; // change button text to "Uploading..."
+                },
+                onComplete: function( filename, response ) {
+                    //alert(filename);
+                    btn.innerHTML = 'Choose Another file';
+                    progressOuter.style.display = 'none'; // hide progress bar when upload is completed
+
+                    if ( !response ) {
+                        //msgBox.innerHTML = 'Unable to upload file';
+                        //return;
+                    }
+
+                    if ( response.success ) {
+                        loadImages();
+                        //msgBox.innerHTML = '<strong>' + escapeTags( filename ) + '</strong>' + ' successfully uploaded.';
+                    } else {
+                        if ( response.msg )  {
+                            //msgBox.innerHTML = escapeTags( response.msg );
+                        } else {
+                            //msgBox.innerHTML = 'An error occurred and the upload failed.';
+                        }
+                    }
+                },
+                onError: function() {
+//                    progressOuter.style.display = 'none';
+//                    msgBox.innerHTML = 'Unable to upload file';
+                }
+            });
+
+            function loadImages() {
+                $.ajax({
+                    method: "POST",
+                    url: loadImagesUrl
+                }).done(function(html) {
+                    $('#galleryImages').html(html);
+                    colorBox();
+                }).fail(function() {
+                });
+            }
+
+            function removeImage(id, temp) {
+                $.ajax({
+                    method: "POST",
+                    url: '{{ url('news_article_delete_image') }}',
+                    data: {
+                        id: id,
+                        temp: temp
+                    },
+                    dataType:'json'
+                }).done(function(json) {
+                    if(!json.success) {
+                        alert('something went wrong');
+                    }
+                    loadImages();
+                }).fail(function() {
+                });
+            }
+
+            function getActiveEditorInstance() {
+                var ck_instance_name = false;
+                for ( var ck_instance in CKEDITOR.instances ){
+                    if (CKEDITOR.instances[ck_instance].focusManager.hasFocus){
+                        ck_instance_name = ck_instance;
+                        return ck_instance_name;
+                    }
+                }
+                return false;
+            };
+
+            function colorBox() {
+                var colorbox_params = {
+                    reposition: true,
+                    scalePhotos: true,
+                    scrolling: false,
+                    previous: '<i class="icon-arrow-left"></i>',
+                    next: '<i class="icon-arrow-right"></i>',
+                    close: '&times;',
+                    current: '{current} of {total}',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    onOpen: function () {
+                        document.body.style.overflow = 'hidden';
+                    },
+                    onClosed: function () {
+                        document.body.style.overflow = 'auto';
+                    },
+                    onComplete: function () {
+                        $.colorbox.resize();
+                    }
+                };
+
+                $('.ace-thumbnails [data-rel="colorbox"]').colorbox(colorbox_params);
+                $("#cboxLoadingGraphic").append("<i class='icon-spinner orange'></i>");//let's add a custom loading icon
+
+                $('#galleryImages .icon-link').click(function(e){
+                    e.preventDefault();
+                    var activeEditor = getActiveEditorInstance();
+                    if(activeEditor) {
+                        var img = $(this).closest('li').find('img');
+                        var element = CKEDITOR.dom.element.createFromHtml( '<img src="' + img.attr('src') + '" />' );
+                        CKEDITOR.instances[activeEditor].insertElement( element );
+                    }
+                });
+                $('#galleryImages .gallery-remove-image').click(function(e){
+                    e.preventDefault();
+                    if(confirm('Are you sure?')) {
+                        var img_id = $(this).attr('img-id');
+                        removeImage(img_id, false);
+                    }
+                });
+            }
+
+            loadImages();
+
+        });
+    </script>
+{% endblock %}
+
+
+
+
